@@ -307,6 +307,7 @@ class Netzplan {
         this.arbeitspakete.forEach(ap => this.verbindeNodes(ap.id));
     }
 
+
     verbindeNodes(apID) {
 	const ap = this.arbeitspakete.find(a => a.id === apID);
 	if (!ap) {
@@ -359,9 +360,11 @@ class Netzplan {
     }
 
     setzeArbeitspaketInGrid(ap, spalte, zeile) {
-        ap.gridRow = zeile;
 	ap.gridColumn = spalte;
+        ap.gridRow = zeile;
         this.bereinigeVorgaenger(ap, zeile);
+	ap.gridColumn = spalte;
+        ap.gridRow = zeile;
 
         const apElement = this.erstelleArbeitspaketElement(ap);
         apElement.style.gridColumn = spalte;
@@ -401,21 +404,23 @@ class Netzplan {
             this.einfuegenArbeitspakete(nachfolger, spalte + 2, naechsteZeile);
         });
     }
-    
+
     // Methode zum Bereinigen der Vorgänger
-    bereinigeVorgaenger(ap, zeile) {
+    bereinigeVorgaenger(ap) {
         const vorgaengerInDerselbenZeile = [];
         ap.vorgaenger.forEach(vgId => {
             const vg = this.arbeitspakete.find(a => a.id === vgId);
-	    console.log(ap.id+"("+ap.gridRow+"):"+vgId+"("+vg.gridRow+")");
-            if (vg && vg.gridRow === zeile) {
+            console.log(ap.id + "(" + ap.gridRow + "):" + vgId + "(" + vg.gridRow + ")");
+            if (vg && vg.gridRow === ap.gridRow) {
                 vorgaengerInDerselbenZeile.push(vgId);
             }
         });
 
-        const frstVorgaenger = ap.vorgaenger[0];
-        ap.vorgaenger = ap.vorgaenger.filter(vgId => !vorgaengerInDerselbenZeile.includes(vgId));
-        if (ap.vorgaenger.length === 0) { ap.vorgaenger.push(frstVorgaenger) }
+        if (vorgaengerInDerselbenZeile.length > 1) {
+            // Behalte nur den letzten Vorgänger in derselben Zeile
+            const letzterVorgaenger = vorgaengerInDerselbenZeile[vorgaengerInDerselbenZeile.length - 1];
+            ap.vorgaenger = ap.vorgaenger.filter(vgId => vgId === letzterVorgaenger);
+        }
     }
 }
 

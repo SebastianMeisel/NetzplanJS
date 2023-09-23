@@ -14,5 +14,3 @@ for (let i = 65; i <= 90; i++) { // ASCII values for A to Z
         container.addEventListener('click', showText);
     }
 }
-// Attach the event listener to the container
-document.getElementById('myContainer').addEventListener('click', showText);
