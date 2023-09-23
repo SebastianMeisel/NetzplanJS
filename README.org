@@ -1,0 +1,35 @@
+* NetzplanJS
+
+NetzplanJS ist ein Projekt, das darauf abzielt, Netzpläne zu visualisieren und zu manipulieren. Es verwendet JavaScript für die Hauptlogik und bietet eine benutzerfreundliche Oberfläche.
+
+** Hauptfunktionen
+
+- [[./Netzplan.js][Netzplan.js]]: Dies ist die Hauptdatei, die die Logik für die Erstellung und Manipulation von Netzplänen enthält.
+- [[./revealValues.js][revealValues.js]]: Eine Hilfsdatei, die dazu dient, bestimmte Werte im Netzplan aufzudecken.
+- [[./index.html][index.html]]: Die Haupt-HTML-Datei, die die Struktur der Webseite definiert.
+- [[./styles.css][styles.css]]: Enthält die Stildefinitionen für die Webseite.
+
+** Installation und Verwendung
+
+1. Klonen Sie das Repository auf Ihren lokalen Computer.
+2. Öffnen Sie die =index.html=-Datei in einem Webbrowser Ihrer Wahl.
+3. Interagieren Sie mit dem Netzplan über die bereitgestellte Benutzeroberfläche.
+
+** Mitwirken
+
+Wenn Sie an der Weiterentwicklung dieses Projekts interessiert sind oder Fehler finden, können Sie gerne einen Pull Request erstellen oder ein Issue melden.
+
+** Lizenz
+Das Programm unterliegt der GPLv3. Daraus ergeben sich folgende Rechte und Pflichten:
+
+  - **Rechte**:
+    + Sie dürfen das Programm frei verwenden, modifizieren und verteilen.
+    + Sie können das Programm unter den Bedingungen der GNU General Public License weitergeben.
+    + Sie haben das Recht, auf spätere Versionen der Lizenz zu verweisen, falls diese veröffentlicht werden.
+  - **Pflichten**:
+    + Wenn Sie das Programm weitergeben oder modifizieren, müssen Sie die entsprechenden Lizenzinformationen beibehalten.
+    + Sie dürfen keine zusätzlichen Einschränkungen einführen, die über das hinausgehen, was die Lizenz erfordert.
+    + Sie müssen den Empfängern eine Kopie der GNU General Public License zusammen mit dem Programm zur Verfügung stellen.
+  
+Für eine detaillierte Beschreibung der Rechte und Pflichten lesen Sie bitte die vollständige Lizenz in der [[file:LICENSE][LICENSE]]-Datei im selben Verzeichnis.
+Die Software unterliegt der GPL
