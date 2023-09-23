@@ -1,0 +1,163 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.connection {
+    position: absolute;
+    background-color: black;
+    height: 2px;
+}
+
+#grid-container {
+    display: grid;
+    /* Die Spaltenanzahl wird dynamisch in JavaScript gesetzt */
+    grid-template-columns: repeat(1, 1fr); /* Temporärer Wert */
+    grid-gap: 0px;
+}
+
+.node {
+    display: grid;
+    grid-template-rows: 20px 20px 20px 20px 20px;
+    grid-template-columns: 33% 33% 33%;
+    grid-template-areas:
+	'FAZ . FEZ'
+	'ID ID ID'
+	'D GP FP'
+	'SAZ . SEZ';
+    height: fit-content;
+} 
+
+.ID {
+    grid-area: ID;
+    border-color: black;
+    border: solid 1px;
+    font-size: 16px;
+    text-align: center;
+    text-color: blue;
+}
+
+.FAZ {
+    grid-area: FAZ;
+    text-align: left;
+}
+
+.FEZ {
+    grid-area: FEZ;
+    text-align: right;
+}
+
+.dauer {
+    grid-area: D;
+    border-color: black;
+    border: solid 1px;
+    font-size: 16px;
+    text-align: center;
+    text-color: blue;
+}
+
+.GP {
+    grid-area: GP;
+    border-color: black;
+    border: solid 1px;
+    font-size: 16px;
+    text-align: center;
+    text-color: blue;
+}
+
+.FP {
+    grid-area: FP;
+    border-color: black;
+    border: solid 1px;
+    font-size: 16px;
+    text-align: center;
+    text-color: blue;
+}
+
+
+.SAZ {
+    grid-area: SAZ;
+    text-align: left;
+}
+
+.SEZ {
+    grid-area: SEZ;
+    text-align: right;
+}
+
+.FAZ, .FEZ, .SAZ, .SEZ, .GP, .FP {
+    color: transparent;
+    border-color: black;
+    cursor: pointer;
+}
+
+.lines {
+    display: grid;
+    top: 25%;
+    width: 100%;
+    height:25%;
+    position: relative;
+}
+
+.lines .no {
+    position: absolute;
+    left: 0;
+    margin: 0;
+    height: 2px;
+    background: black;
+    width: 70.71%;
+    top: 50%; /* Position it at the middle vertically */
+    transform: rotate(-45deg); /* Shift it up by half its height to center it */
+    transform-origin: 0% 0%;
+}
+
+.lines .so {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    background: black;
+    width: 70.71%;
+    top: 50%; /* Position it at the middle vertically */
+    transform: rotate(45deg); /* Shift it up by half its height to center it */
+    transform-origin: 0% 0%;
+}
+
+.lines .o {
+    left: 0;
+    position: absolute;
+    height: 2px;
+    background: black;
+    width: 50%;
+    top: 50%; /* Position it at the middle vertically */
+}
+
+
+.lines .nw {
+    position: absolute;
+    right: 0;
+    height: 2px;
+    background: black;
+    width: 70.71%;
+    top: 50%; /* Position it at the middle vertically */
+    transform: rotate(45deg); /* Shift it up by half its height to center it */
+    transform-origin: 100% 0%;
+}
+
+.lines .sw {
+    position: absolute;
+    right: 0;
+    height: 2px;
+    background: black;
+    width: 70.71%;
+    top: 50%; /* Position it at the middle vertically */
+    transform: rotate(-45deg); /* Shift it up by half its height to center it */
+    transform-origin: 100% 0%;
+}
+
+.lines .w {
+    right: 0;
+    position: absolute;
+    height: 2px;
+    background: black;
+    width: 50%;
+    top: 50%; /* Position it at the middle vertically */
+}
