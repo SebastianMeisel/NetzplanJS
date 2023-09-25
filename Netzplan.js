@@ -49,40 +49,26 @@ class Arbeitspaket {
     }
 
     sortiereNachfolger(projekt) {
-    // Überprüfen, ob das Projekt definiert ist
-    if (!projekt) {
-        return;
-    }
+	// Überprüfen, ob das Projekt definiert ist
+	if (!projekt || !projekt.arbeitspakete) {
+            return;
+	}
 
-    // Überprüfen, ob projekt.arbeitspakete definiert ist
-    if (!projekt.arbeitspakete) {
-        return;
-    }
-
-    this.nachfolger.sort((aId, bId) => {
-        const a = projekt.arbeitspakete.find(ap => ap.id === aId);
-        const b = projekt.arbeitspakete.find(ap => ap.id === bId);
-
-        // Überprüfen, ob das Arbeitspaket 'a' gefunden wurde
-        if (!a) {
-        }
-
-        // Überprüfen, ob das Arbeitspaket 'b' gefunden wurde
-        if (!b) {
-        }
-
-        // Wenn eines der Arbeitspakete nicht gefunden wurde, geben Sie 0 zurück
-        if (!a || !b) {
-            return 0;
-        }
-
-        return a.GP - b.GP; // Sortiere aufsteigend nach GP
-    });
-        this.nachfolger.sort((aId, bId) => {
+	// Sortiere nachfolger basierend auf dem GP-Wert
+	this.nachfolger.sort((aId, bId) => {
             const a = projekt.arbeitspakete.find(ap => ap.id === aId);
             const b = projekt.arbeitspakete.find(ap => ap.id === bId);
+
+            // Überprüfen, ob das Arbeitspaket 'a' oder 'b' gefunden wurde
+            if (!a || !b) {
+		return 0;
+            }
+
             return a.GP - b.GP; // Sortiere aufsteigend nach GP
-        });
+	});
+
+	// Entferne das Arbeitspaket selbst aus seinem nachfolger-Array
+	this.nachfolger = this.nachfolger.filter(nfId => nfId !== this.id);
     }
 }
 
@@ -167,8 +153,9 @@ class Projekt {
 
     // Methode zum Anzeigen der Liste der Arbeitspakete
     showArbeitsPaketListe() {
-        this.durchRechnen(); // Durchrechnen vor dem Anzeigen der Liste
-
+	if (this.arbeitspakete[0].FEZ === 0) {
+	    this.durchRechnen(); // Durchrechnen vor dem Anzeigen der Liste
+	}
         // Erstelle die Tabelle und füge sie zum Container hinzu
         const container = document.getElementById("arbeitspaketliste");
         const table = document.createElement("table");
@@ -176,7 +163,7 @@ class Projekt {
         const tbody = document.createElement("tbody");
 
         // Erstelle die Überschriften
-        const headers = ["ID", "Dauer", "Vorgänger", "FAZ", "FEZ", "SAZ", "SEZ", "GP", "FP"];
+        const headers = ["ID", "Dauer", "Vorgänger"]; //, "FAZ", "FEZ", "SAZ", "SEZ", "GP", "FP"];
         const headerRow = document.createElement("tr");
         headers.forEach(header => {
             const th = document.createElement("th");
@@ -187,18 +174,18 @@ class Projekt {
         table.appendChild(thead);
 
         // Füge die Daten hinzu
-        this.arbeitspakete.forEach(ap => {
+        this.arbeitspakete.forEach(ap => {	    
             const row = document.createElement("tr");
             const cells = [
                 ap.id,
                 ap.dauer,
                 ap.vorgaenger.join(", "),
-                ap.FAZ,
-                ap.FEZ,
-                ap.SAZ,
-                ap.SEZ,
-                ap.GP,
-                ap.FP
+                // ap.FAZ,
+                // ap.FEZ,
+                // ap.SAZ,
+                // ap.SEZ,
+                // ap.GP,
+                // ap.FP
             ];
 
             cells.forEach(cellData => {
@@ -283,6 +270,9 @@ class Projekt {
 
     zeigeNetzplan() {
         const netzplan = new Netzplan(this);
+	if (this.arbeitspakete[0].FEZ === 0) {
+	    this.durchRechnen(); // Durchrechnen vor dem Anzeigen der Liste
+	}
         netzplan.zeichne();
     }
 }
@@ -298,7 +288,8 @@ class Netzplan {
     zeichne() {
 	Netzplan.bind(this);
         const kritischerPfadLaenge = this.projekt.kritischerPfad.length;
-        this.gridContainer.style.gridTemplateColumns = `repeat(${2 * kritischerPfadLaenge}, 1fr)`;
+        this.gridContainer.style.gridTemplateColumns = `repeat(20,100px)`;
+        this.gridContainer.style.gridTemplateRows = `repeat(8, 100px)`;
 
         const startAp = this.projekt.arbeitspakete[0];
         this.einfuegenArbeitspakete(startAp, 1, 1);
@@ -307,49 +298,194 @@ class Netzplan {
         this.arbeitspakete.forEach(ap => this.verbindeNodes(ap.id));
     }
 
-
     verbindeNodes(apID) {
-	const ap = this.arbeitspakete.find(a => a.id === apID);
-	if (!ap) {
-            console.error(`Arbeitspaket mit ID ${apID} nicht gefunden.`);
-            return;
-	}
+        let ap = this.projekt.arbeitspakete.find(ap => ap.id === apID);
+        let nachfolger = ap.nachfolger;
+	const colorPalette = {
+	    'A': '#666666', // Gray
+	    'B': '#FF6B6B', // Red
+	    'C': '#4DB6AC', // Teal
+	    'D': '#FFD54F', // Yellow
+	    'E': '#304FFE', // Blue
+	    'F': '#C0CA33', // Lime
+	    'G': '#8E24AA', // Purple
+	    'H': '#FFAB40', // Orange
+	    'I': '#00ACC1', // Cyan
+	    'J': '#7CB342'  // Light Green
+	};
+	let lineColor = colorPalette[ap.id];
+	
+        nachfolger.forEach(nachfolgerID => {
+            let nachfolgerAP = this.projekt.arbeitspakete.find(ap => ap.id === nachfolgerID);
 
-	// Überprüfe, ob es sich um das letzte Arbeitspaket handelt
-	if (ap.nachfolger.length === 0) return;
+            // Erstelle den .lines-Container für den aktuellen Nachfolger
+            let linesContainer = document.createElement('div');
+            linesContainer.className = 'lines';
+            linesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
 
-	const gridContainer = document.getElementById("grid-container");
+            // Setze gridRow und gridColumn für den .lines-Container
+            linesContainer.style.gridRowStart = ap.gridRow;
+            linesContainer.style.gridColumnStart = ap.gridColumn + 1;
 
-	// Erstelle den .lines-Container
-	const linesContainer = document.createElement("div");
-	linesContainer.classList.add("lines");
-	console.log(ap.gridColumn)
-	linesContainer.style.gridColumnStart = ap.gridColumn + 1; // Nächste Zelle nach dem aktuellen AP
-	linesContainer.style.gridRowStart = ap.gridRow;
-	linesContainer.style.gridTemplateRows = `repeat(${ap.nachfolger.length}, 1fr)`;
-	linesContainer.style.gridTemplateColumns = "1fr 1fr"; // Zwei Spalten: Nachfolger, Vorgänger
+            let line = document.createElement('div');
+            line.className = 'line';
+	    line.style.backgroundColor = lineColor;
 
-	ap.nachfolger.forEach(nfId => {
-            const nf = this.arbeitspakete.find(a => a.id === nfId);
-
-            const lineElement = document.createElement("div");
-            lineElement.classList.add("line");
-
-            // Bestimme die Klasse basierend auf der gridRow des Nachfolgers
-            if (nf.gridRow === ap.gridRow) {
-		lineElement.classList.add("o");
-            } else if (nf.gridRow < ap.gridRow) {
-		lineElement.classList.add("no");
+            if (ap.gridRow === nachfolgerAP.gridRow) {
+                line.classList.add('o');
+            } else if (ap.gridRow > nachfolgerAP.gridRow) {
+                line.classList.add('no');
             } else {
-		lineElement.classList.add("so");
+                line.classList.add('so');
+            }
+            linesContainer.appendChild(line);
+
+	    // Füge den .lines-Container in das Grid ein
+            let gridContainer = document.getElementById('grid-container');
+            gridContainer.appendChild(linesContainer);
+	    
+	    // Erstelle den .lines-Container für den aktuellen Nachfolger
+            let nfLinesContainer = document.createElement('div');
+            nfLinesContainer.className = 'lines';
+            nfLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
+
+            // Setze gridRow und gridColumn für den .lines-Container
+            nfLinesContainer.style.gridRowStart = nachfolgerAP.gridRow;
+            nfLinesContainer.style.gridColumnStart = nachfolgerAP.gridColumn - 1;
+	    
+            // Linie vor dem Nachfolger
+            let lineBeforeSuccessor = document.createElement('div');
+            lineBeforeSuccessor.className = 'line';
+    	    lineBeforeSuccessor.style.backgroundColor = lineColor;
+
+
+            if (ap.gridRow === nachfolgerAP.gridRow) {
+                lineBeforeSuccessor.classList.add('w');
+            } else if (ap.gridRow > nachfolgerAP.gridRow) {
+                lineBeforeSuccessor.classList.add('sw');
+            } else {
+                lineBeforeSuccessor.classList.add('nw');
+            }
+            nfLinesContainer.appendChild(lineBeforeSuccessor);
+
+            // Füge den .lines-Container in das Grid ein
+            gridContainer.appendChild(nfLinesContainer);
+
+            // Erstelle den verticalLinesContainer für den aktuellen Nachfolger
+            if (ap.gridRow == nachfolgerAP.gridRow) {
+		console.log("skip");
+            } else if (ap.gridRow > nachfolgerAP.gridRow) {
+		// Füge .line-.nl-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
+		for (let i = ap.gridRow - 1; i >= nachfolgerAP.gridRow + 1; i--) {
+		    let verticalLinesContainer = document.createElement('div');
+		    verticalLinesContainer.className = 'lines';
+		    verticalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
+		    // Setze gridRow und gridColumn für den verticalLinesContainer
+		    verticalLinesContainer.style.gridRowStart = i;
+		    verticalLinesContainer.style.gridColumnStart = ap.gridColumn + 1;
+                    let lineDiv = document.createElement('div');
+                    lineDiv.className = 'n';
+	    	    lineDiv.style.backgroundColor = lineColor;
+                    verticalLinesContainer.appendChild(lineDiv);
+		    // Füge den verticalLinesContainer in das Grid ein
+		    gridContainer.appendChild(verticalLinesContainer);
+
+		}
+	    } else {
+
+		// Füge .line-.sl-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
+		for (let i = ap.gridRow + 1; i <= nachfolgerAP.gridRow - 1; i++) {
+		    let verticalLinesContainer = document.createElement('div');
+		    verticalLinesContainer.className = 'lines';
+		    verticalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
+
+		    // Setze gridRow und gridColumn für den verticalLinesContainer
+		    verticalLinesContainer.style.gridRowStart = i;
+		    verticalLinesContainer.style.gridColumnStart = ap.gridColumn + 1;
+                    let lineDiv = document.createElement('div');
+                    lineDiv.className = 's';
+		    lineDiv.style.backgroundColor = lineColor;
+                    verticalLinesContainer.appendChild(lineDiv);
+		    // Füge den verticalLinesContainer in das Grid ein
+		    gridContainer.appendChild(verticalLinesContainer);
+		}
             }
 
-            linesContainer.appendChild(lineElement);
-	});
+            // Erstelle den horizontalLinesContainer für den aktuellen Nachfolger
+	    if (ap.gridColumn === nachfolgerAP.gridColumn - 2 || (nachfolgerAP.gridRow === 1 && ap.gridRow === 1)) {
+		console.log("skip");
+	    } else if (ap.gridRow === nachfolgerAP.gridRow ) {
+		// Füge .line-.wt-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
+		for (let i = ap.gridColumn + 1; i <= nachfolgerAP.gridColumn - 1; i++) {
+		    let horizontalLinesContainer = document.createElement('div');
+		    if (i === ap.gridColumn + 1) {
+			horizontalLinesContainer.className = 'hlines-start';
+		    } else if (i == nachfolgerAP.gridColumn -1 ) {
+			horizontalLinesContainer.className = 'hlines-end';
+		    } else {
+			horizontalLinesContainer.className = 'hlines';
+		    }
+		    horizontalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
+		    // Setze gridRow und gridColumn für den horizontalLinesContainer
+		    horizontalLinesContainer.style.gridColumnStart = i;
+		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow;
+                    let lineDiv = document.createElement('div');
+                    lineDiv.className = 'wb';
+		    lineDiv.style.backgroundColor = lineColor;
+                    horizontalLinesContainer.appendChild(lineDiv);
+		    // Füge den horizontalLinesContainer in das Grid ein
+		    gridContainer.appendChild(horizontalLinesContainer);
+		}
+            } else if (ap.gridRow > nachfolgerAP.gridRow) {
+		// Füge .line-.wt-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
+		for (let i = ap.gridColumn + 1; i <= nachfolgerAP.gridColumn - 1; i++) {
+		    let horizontalLinesContainer = document.createElement('div');
+		    if (i === ap.gridColumn + 1) {
+			horizontalLinesContainer.className = 'hlines-start';
+		    } else if (i == nachfolgerAP.gridColumn -1 ) {
+			horizontalLinesContainer.className = 'hlines-end';
+		    } else {
+			horizontalLinesContainer.className = 'hlines';
+		    }
+		    horizontalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
+		    // Setze gridRow und gridColumn für den horizontalLinesContainer
+		    horizontalLinesContainer.style.gridColumnStart = i;
+		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow + 1;
+                    let lineDiv = document.createElement('div');
+                    lineDiv.className = 'wt';
+		    lineDiv.style.backgroundColor = lineColor;
+                    horizontalLinesContainer.appendChild(lineDiv);
+		    // Füge den horizontalLinesContainer in das Grid ein
+		    gridContainer.appendChild(horizontalLinesContainer);
+		}
+	    } else {
+		// Füge .line-.ob-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
+		for (let i = ap.gridColumn + 1; i <= nachfolgerAP.gridColumn - 1; i++) {
+		    let horizontalLinesContainer = document.createElement('div');
+		    if (i === ap.gridColumn + 1) {
+			horizontalLinesContainer.className = 'hlines-start';
+		    } else if (i == nachfolgerAP.gridColumn -1 ) {
+			horizontalLinesContainer.className = 'hlines-end';
+		    } else {
+			horizontalLinesContainer.className = 'hlines';
+		    }
+		    horizontalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
 
-	gridContainer.appendChild(linesContainer);
+		    // Setze gridRow und gridColumn für den horizontalLinesContainer
+		    horizontalLinesContainer.style.gridColumnStart = i;
+		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow - 1;
+                    let lineDiv = document.createElement('div');
+                    lineDiv.className = 'ob';
+		    lineDiv.style.backgroundColor = lineColor;
+                    horizontalLinesContainer.appendChild(lineDiv);
+		    // Füge den horizontalLinesContainer in das Grid ein
+		    gridContainer.appendChild(horizontalLinesContainer);
+		}
+            }
+
+        });
     }
-    
+
     einfuegenArbeitspakete(ap, spalte, zeile) {
         if (this.platzierteAPs.has(ap.id)) {
             return;
@@ -397,29 +533,40 @@ class Netzplan {
 
     sortiereUndPlatziereNachfolger(ap, spalte, zeile) {
         let naechsteZeile = zeile;
+	let d = new Date();
         ap.sortiereNachfolger(this.projekt);
-        ap.nachfolger.forEach((nachfolgerId, index) => {
-            const nachfolger = this.projekt.arbeitspakete.find(a => a.id === nachfolgerId);
-            naechsteZeile += index * 2;
-            this.einfuegenArbeitspakete(nachfolger, spalte + 2, naechsteZeile);
-        });
+	ap.nachfolger = [...new Set(ap.nachfolger)];
+	const l = ap.nachfolger.length;
+	if (l === 0){
+	    return;
+	}
+        for (var i=0; i<l; i++) {
+	    const nachfolgerId = ap.nachfolger[i];
+	    const nachfolger = this.projekt.arbeitspakete.find(a => a.id === nachfolgerId );
+	    naechsteZeile = i * 2 + 1;
+	    if (!this.platzierteAPs.has(nachfolgerId)) {
+		this.einfuegenArbeitspakete(nachfolger, spalte + 2, naechsteZeile);
+	    }
+        }
     }
 
     // Methode zum Bereinigen der Vorgänger
     bereinigeVorgaenger(ap) {
         const vorgaengerInDerselbenZeile = [];
+        const vorgaengerInAndererZeile = [];
         ap.vorgaenger.forEach(vgId => {
             const vg = this.arbeitspakete.find(a => a.id === vgId);
-            console.log(ap.id + "(" + ap.gridRow + "):" + vgId + "(" + vg.gridRow + ")");
             if (vg && vg.gridRow === ap.gridRow) {
                 vorgaengerInDerselbenZeile.push(vgId);
-            }
+            } else {
+		vorgaengerInAndererZeile.push(vgId);
+	    }
         });
 
         if (vorgaengerInDerselbenZeile.length > 1) {
             // Behalte nur den letzten Vorgänger in derselben Zeile
             const letzterVorgaenger = vorgaengerInDerselbenZeile[vorgaengerInDerselbenZeile.length - 1];
-            ap.vorgaenger = ap.vorgaenger.filter(vgId => vgId === letzterVorgaenger);
+            ap.vorgaenger = ap.vorgaenger.filter(vgId => (vgId === letzterVorgaenger || vorgaengerInAndererZeile.includes(vgId)));
         }
     }
 }
@@ -428,6 +575,24 @@ class Netzplan {
 // Beispiel
 const meinProjekt = new Projekt("Projekt1");
 meinProjekt.generateRandomNetzplan();
-meinProjekt.showArbeitsPaketListe();
 meinProjekt.zeigeNetzplan();
+meinProjekt.showArbeitsPaketListe();
+
+
+// Function to change the text color of an element
+function showText(event) {
+    // Check if the clicked element has one of the specified classes
+    if (['FAZ', 'FEZ', 'SAZ', 'SEZ', 'GP', 'FP'].includes(event.target.className)) {
+        event.target.style.color = "black";
+    }
+}
+
+// Loop through possible container IDs (A to Z) and attach the event listener
+for (let i = 65; i <= 90; i++) { // ASCII values for A to Z
+    const containerId = String.fromCharCode(i);
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.addEventListener('click', showText);
+    }
+}
 
