@@ -290,3 +290,11 @@ body {
     font-size: 28px;
     text-align: center;
 }
+
+#hilfstext {
+    boders: 1px;
+    boder-radius: 10px;
+    background-color: orange;
+    color: white;
+    padding: 15px;
+}

@@ -572,18 +572,39 @@ class Netzplan {
 }
 
 
-// Beispiel
 const meinProjekt = new Projekt("Projekt1");
 meinProjekt.generateRandomNetzplan();
 meinProjekt.zeigeNetzplan();
 meinProjekt.showArbeitsPaketListe();
 
+const hilfstexte = {
+    'FAZ': 'Frühester Anfangszeitpunkt (FAZ) = maximale FEZ der Vorgänger',
+    'FEZ': 'Frühester Endzeitpunkt (FEZ) = FAZ + D(auer)',
+    'SAZ': 'Spätester Anfangszeitpunkt (SAZ) = SEZ - D(auer)',
+    'SEZ': 'Spätester Endzeitpunkt (SEZ) = minimale SAZ der Nachfolger',
+    'GP': 'Gesamtpuffer (GP) = ',
+    'FP': 'Freier Puffer'
+};
 
 // Function to change the text color of an element
+let aktiverHilfstext = null; // Globale Variable, um den aktuellen Hilfstext zu speichern
 function showText(event) {
+    if (aktiverHilfstext) {
+        aktiverHilfstext.remove();
+        aktiverHilfstext = null;
+    } 
     // Check if the clicked element has one of the specified classes
     if (['FAZ', 'FEZ', 'SAZ', 'SEZ', 'GP', 'FP'].includes(event.target.className)) {
         event.target.style.color = "black";
+	const hilfstext = document.createElement('span');
+	hilfstext.textContent = hilfstexte[event.target.className];
+	hilfstext.style.position = 'absolute';
+	hilfstext.style.left = event.target.getBoundingClientRect().left+10 + 'px';
+	hilfstext.style.top = event.target.getBoundingClientRect().bottom+10 + 'px';
+	hilfstext.id = "hilfstext";
+	document.body.appendChild(hilfstext);
+	// Aktuellen Hilfstext speichern
+	aktiverHilfstext = hilfstext;
     }
 }
 
