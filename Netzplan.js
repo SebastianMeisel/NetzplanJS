@@ -595,7 +595,15 @@ function showText(event) {
     } 
     // Check if the clicked element has one of the specified classes
     if (['FAZ', 'FEZ', 'SAZ', 'SEZ', 'GP', 'FP'].includes(event.target.className)) {
-        event.target.style.color = "black";
+
+	// Farbanpassung je nach Modus
+        if (document.body.classList.contains('dark-mode')) {
+            event.target.style.color = "white";
+            event.target.style.borderColor = "white";
+        } else {
+            event.target.style.color = "black";
+            event.target.style.borderColor = "whiteblack";
+        }
 	const hilfstext = document.createElement('span');
 	hilfstext.textContent = hilfstexte[event.target.className];
 	hilfstext.style.position = 'absolute';
@@ -617,3 +625,24 @@ for (let i = 65; i <= 90; i++) { // ASCII values for A to Z
     }
 }
 
+const darkModeToggle = document.getElementById("darkModeToggle");
+const body = document.body;
+
+// Überprüfen, ob ein Dark Mode Cookie gesetzt ist
+if (document.cookie.split(';').some((item) => item.trim().startsWith('darkMode='))) {
+    const darkModeValue = document.cookie.replace(/(?:(?:^|.*;\s*)darkMode\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    if (darkModeValue === "enabled") {
+        body.classList.add("dark-mode");
+        darkModeToggle.checked = true;
+    }
+}
+
+darkModeToggle.addEventListener("change", function() {
+    if (this.checked) {
+        body.classList.add("dark-mode");
+        document.cookie = "darkMode=enabled; path=/";
+    } else {
+        body.classList.remove("dark-mode");
+        document.cookie = "darkMode=disabled; path=/";
+    }
+});
