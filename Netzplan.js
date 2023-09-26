@@ -418,19 +418,20 @@ class Netzplan {
 		// Füge .line-.wt-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
 		for (let i = ap.gridColumn + 1; i <= nachfolgerAP.gridColumn - 1; i++) {
 		    let horizontalLinesContainer = document.createElement('div');
-		    if (i === ap.gridColumn + 1) {
-			horizontalLinesContainer.className = 'hlines-start';
-		    } else if (i == nachfolgerAP.gridColumn -1 ) {
-			horizontalLinesContainer.className = 'hlines-end';
-		    } else {
+		    // if (i === ap.gridColumn + 1) {
+		    // 	horizontalLinesContainer.className = 'hlines-start';
+		    // } else if (i == nachfolgerAP.gridColumn -1 ) {
+		    // 	horizontalLinesContainer.className = 'hlines-end';
+		    // } else {
 			horizontalLinesContainer.className = 'hlines';
-		    }
+		    // }
 		    horizontalLinesContainer.style.gridTemplateColumns = '1fr 1fr'; // Vorgänger, Nachfolger
 		    // Setze gridRow und gridColumn für den horizontalLinesContainer
 		    horizontalLinesContainer.style.gridColumnStart = i;
 		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow;
                     let lineDiv = document.createElement('div');
-                    lineDiv.className = 'wb';
+                    lineDiv.className = 'wc';
+		    lineDiv.textContent = ap.id+"->"+nachfolgerID;
 		    lineDiv.style.backgroundColor = lineColor;
                     horizontalLinesContainer.appendChild(lineDiv);
 		    // Füge den horizontalLinesContainer in das Grid ein
@@ -453,6 +454,7 @@ class Netzplan {
 		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow + 1;
                     let lineDiv = document.createElement('div');
                     lineDiv.className = 'wt';
+		    lineDiv.textContent = ap.id+"->"+nachfolgerID;
 		    lineDiv.style.backgroundColor = lineColor;
                     horizontalLinesContainer.appendChild(lineDiv);
 		    // Füge den horizontalLinesContainer in das Grid ein

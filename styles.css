@@ -1,217 +1,233 @@
-/* Grundlegende Farbvariablen */
+/* Root variables */
 :root {
-    --background-color: white;
-    --font-color: black;
-    --border-color: black;
-    --text-color: black;
-    --connection-color: black;
-    --hilfstext-bg: orange;
-    --hilfstext-color: white;
+  --background-color: white;
+  --font-color: black;
+  --border-color: black;
+  --text-color: black;
+  --connection-color: black;
+  --hilfstext-bg: orange;
+  --hilfstext-color: white;
 }
 
-/* Dark Mode Farbvariablen */
+/* Dark mode variables */
 .dark-mode {
-    --background-color: #121212;
-    --font-color: #e0e0e0;
-    --border-color: white;
-    --text-color: white;
-    --connection-color: white;
-    --hilfstext-bg: #424242;
-    --hilfstext-color: white;
+  --background-color: #121212;
+  --font-color: #e0e0e0;
+  --border-color: white;
+  --text-color: white;
+  --connection-color: white;
+  --hilfstext-bg: #424242;
+  --hilfstext-color: white;
 }
 
+/* Global styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--font-color);
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--font-color);
 }
 
-.connection {
-    position: absolute;
-    background-color: var(--connection-color);
-    height: 2px;
-}
-
-#grid-container {
-    display: grid;
-    /* Die Spaltenanzahl wird dynamisch in JavaScript gesetzt */
-    grid-template-columns: repeat(1, 50px); /* Temporärer Wert */
-    grid-template-row: repeat(1, 50px); /* Temporärer Wert */
-    grid-gap: 0px;
-}
-
+/* Node styles */
 .node {
-    display: grid;
-    grid-template-rows: 25% 25% 25% 25%;
-    grid-template-columns: 33% 33% 33%;
-    grid-template-areas:
-	'FAZ . FEZ'
-	'ID ID ID'
-	'D GP FP'
-	'SAZ . SEZ';
-    height: fit-content;
-} 
+  display: grid;
+  grid-template-rows: 25% 25% 25% 25%;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-areas:
+    'FAZ . FEZ'
+    'ID ID ID'
+    'D GP FP'
+    'SAZ . SEZ';
+  height: fit-content;
+}
 
 .ID {
-    grid-area: ID;
-    border-color: var(--border-color);
-    border: solid 1px;
-    font-size: 95%;
-    line-height: 100%;
-    text-align: center;
-    color: var(--text-color); /* Ersetzt text-color */
+  grid-area: ID;
+  border: 1px solid var(--border-color);
+  font-size: 95%;
+  line-height: 100%;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .FAZ {
-    grid-area: FAZ;
-    text-align: left;
-    line-height: 100%;
+  grid-area: FAZ;
+  text-align: left;
+  line-height: 100%;
 }
 
 .FEZ {
-    grid-area: FEZ;
-    text-align: right;
-    vertical-align: text-bottom;
+  grid-area: FEZ;
+  text-align: right;
+  vertical-align: text-bottom;
 }
 
 .dauer {
-    grid-area: D;
-    border-color: var(--border-color);
-    border: solid 1px;
-    font-size: 95%;
-    text-align: center;
-    color: var(--text-color); /* Ersetzt text-color */
+  grid-area: D;
+  border: 1px solid var(--border-color);
+  font-size: 95%;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .GP {
-    grid-area: GP;
-    border-color: var(--border-color);
-    border: solid 1px;
-    font-size: 95%;
-    text-align: center;
-    color: var(--text-color); /* Ersetzt text-color */
+  grid-area: GP;
+  border: 1px solid var(--border-color);
+  font-size: 95%;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .FP {
-    grid-area: FP;
-    border-color: var(--border-color);
-    border: solid 1px;
-    font-size: 95%;
-    text-align: center;
-    color: var(--text-color); /* Ersetzt text-color */
+  grid-area: FP;
+  border: 1px solid var(--border-color);
+  font-size: 95%;
+  text-align: center;
+  color: var(--text-color);
 }
 
-
 .SAZ {
-    grid-area: SAZ;
-    text-align: left;
+  grid-area: SAZ;
+  text-align: left;
 }
 
 .SEZ {
-    grid-area: SEZ;
-    text-align: right;
+  grid-area: SEZ;
+  text-align: right;
 }
 
-.FAZ, .FEZ, .SAZ, .SEZ, .GP, .FP {
-    color: var(--background-color);
-    border-color: var(--border-color);
-    cursor: pointer;
+/* Connection styles */
+.connection {
+  position: absolute;
+  background-color: var(--connection-color);
+  height: 2px;
+}
+
+/* Grid container styles */
+#grid-container {
+  display: grid;
+  grid-template-columns: repeat(1, 50px); /* Temporary value */
+  grid-template-row: repeat(1, 50px); /* Temporary value */
+  grid-gap: 0px;
+}
+
+/* Other styles */
+#Legende.node {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 50px;
+  height: 150px;
+  width: 200px;
+  font-size: 28px;
+}
+
+#Legende * {
+  text-align: center;
+  color: var(--text-color);
+}
+
+#hilfstext {
+  border: 1px solid;
+  border-radius: 10px;
+  background-color: var(--hilfstext-bg);
+  color: var(--hilfstext-color);
+  padding: 15px;
 }
 
 .lines {
-    display: grid;
-    top: 25%;
-    width: 100%;
-    height:25%;
-    position: relative;
+  display: grid;
+  top: 25%;
+  width: 100%;
+  height:25%;
+  position: relative;
 }
 
 .lines .no {
-    position: absolute;
-    left: 0;
-    margin: 0;
-    height: 2px;
-    background: var(--border-color);
-    width: 70.71%;
-    top: 50%; /* Position it at the middle vertically */
-    transform: rotate(-45deg); /* Shift it up by half its height to center it */
-    transform-origin: 0% 0%;
+  position: absolute;
+  left: 0;
+  margin: 0;
+  height: 2px;
+  background: var(--border-color);
+  width: 70.71%;
+  top: 50%; /* Position it at the middle vertically */
+  transform: rotate(-45deg); /* Shift it up by half its height to center it */
+  transform-origin: 0% 0%;
 }
 
 .lines .so {
-    position: absolute;
-    left: 0;
-    height: 2px;
-    background: blackvar(--connection-color);
-    width: 70.71%;
-    top: 50%; /* Position it at the middle vertically */
-    transform: rotate(45deg); /* Shift it up by half its height to center it */
-    transform-origin: 0% 0%;
+  position: absolute;
+  left: 0;
+  height: 2px;
+  background: blackvar(--connection-color);
+  width: 70.71%;
+  top: 50%; /* Position it at the middle vertically */
+  transform: rotate(45deg); /* Shift it up by half its height to center it */
+  transform-origin: 0% 0%;
 }
 
 .lines .o {
-    left: 0;
-    position: absolute;
-    height: 3px;
-    background: var(--connection-color);
-    width: 50%;
-    top: 50%; /* Position it at the middle vertically */
+  left: 0;
+  position: absolute;
+  height: 3px;
+  background: var(--connection-color);
+  width: 50%;
+  top: 50%; /* Position it at the middle vertically */
 }
 
 
 .lines .nw {
-    position: absolute;
-    right: 0;
-    height: 2px;
-    background: var(--connection-color);
-    width: 70.71%;
-    top: 50%; /* Position it at the middle vertically */
-    transform: rotate(45deg); /* Shift it up by half its height to center it */
-    transform-origin: 100% 0%;
+  position: absolute;
+  right: 0;
+  height: 2px;
+  background: var(--connection-color);
+  width: 70.71%;
+  top: 50%; /* Position it at the middle vertically */
+  transform: rotate(45deg); /* Shift it up by half its height to center it */
+  transform-origin: 100% 0%;
 }
 
 .lines .sw {
-    position: absolute;
-    right: 0;
-    height: 2px;
-    background: var(--connection-color);
-    width: 70.71%;
-    top: 50%; /* Position it at the middle vertically */
-    transform: rotate(-45deg); /* Shift it up by half its height to center it */
-    transform-origin: 100% 0%;
+  position: absolute;
+  right: 0;
+  height: 2px;
+  background: var(--connection-color);
+  width: 70.71%;
+  top: 50%; /* Position it at the middle vertically */
+  transform: rotate(-45deg); /* Shift it up by half its height to center it */
+  transform-origin: 100% 0%;
 }
 
 .lines .w {
-    right: 0;
-    position: absolute;
-    height: 3px;
-    background: var(--connection-color);
-    width: 50%;
-    top: 50%; /* Position it at the middle vertically */
+  right: 0;
+  position: absolute;
+  height: 3px;
+  background: var(--connection-color);
+  width: 50%;
+  top: 50%; /* Position it at the middle vertically */
 }
 
 
 .lines .n {
-    top:50%;
-    left: 0%;
-    position: absolute;
-    height: 2px;
-    width: 100%;
-    background: var(--connection-color);
-    transform: rotate(90deg); /* Shift it up by half its height to center it */
-    transform-origin: 50% 50%;
+  top:50%;
+  left: 0%;
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background: var(--connection-color);
+  transform: rotate(90deg); /* Shift it up by half its height to center it */
+  transform-origin: 50% 50%;
 }
 
 
 .lines .s {
-    top:50%;
-    right: 0%;
-    position: absolute;
-    height: 2px;
-    width: 100%;
-    background: black;
-    transform: rotate(90deg); /* Shift it up by half its height to center it */
-    transform-origin: 50% 50%;
+  top:50%;
+  right: 0%;
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background: black;
+  transform: rotate(90deg); /* Shift it up by half its height to center it */
+  transform-origin: 50% 50%;
 }
 
 .hlines {
@@ -244,6 +260,15 @@ body {
 .hlines .wt {
     top: -10px;
     left: 2%;
+    position: absolute;
+    height: 3px;
+    background: var(--connection-color);
+    width: 100%;
+}
+
+.hlines .wc {
+    top: 50%;
+    left: 0;
     position: absolute;
     height: 3px;
     background: var(--connection-color);
@@ -303,80 +328,3 @@ body {
     background: var(--connection-color);
     width: 100%;
 }
-
-#Legende.node {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin: 50px;
-    height: 150px;
-    width: 200px;
-    font-size: 28px;
-}
-
-#Legende * { 
-    text-align: center;
-    color: var(--text-color);
-}
-
-#hilfstext {
-    boders: 1px;
-    boder-radius: 10px;
-    background-color: var(--hilfstext-bg);
-    color: var(--hilfstext-color);
-    padding: 15px;
-}
-
-
-/* Dark Mode Schalter Styling */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #424242;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
