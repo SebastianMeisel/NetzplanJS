@@ -7,17 +7,19 @@
   --connection-color: black;
   --hilfstext-bg: orange;
   --hilfstext-color: white;
+  --table-text-color: #333; // Etwas dunkler als reines Schwarz für den normalen Modus
 }
 
 /* Dark mode variables */
 .dark-mode {
-  --background-color: #121212;
+  --background-color: #101010;
   --font-color: #e0e0e0;
   --border-color: white;
   --text-color: white;
   --connection-color: white;
   --hilfstext-bg: #424242;
   --hilfstext-color: white;
+  --table-text-color: #ccc; // Etwas dunkler als reines Schwarz für den normalen Modus
 }
 
 /* Global styles */
@@ -340,4 +342,96 @@ body {
     height: 3px;
     background: var(--connection-color);
     width: 100%;
+}
+
+/* Allgemeine Tabelle Styles */
+table {
+  width: 50%; /* Nutzt die gesamte Breite des Containers */
+  border-collapse: collapse; /* Entfernt doppelte Ränder zwischen den Zellen */
+  margin-top: 20px; /* Ein bisschen Abstand nach oben */
+  font-family: Arial, sans-serif; /* Eine moderne Schriftart */
+}
+
+thead {
+  background-color: var(--border-color); /* Ein dunkler Hintergrund für den Tabellenkopf */
+}
+
+th, td {
+  border: 1px solid var(--border-color); /* Ein Rand um jede Zelle */
+  padding: 8px 12px; /* Etwas Polsterung in den Zellen für bessere Lesbarkeit */
+  text-align: left; /* Linksbündige Textausrichtung */
+  color: var(--table-text-color); // Verwenden Sie die variable für die Textfarbe
+}
+
+th {
+  color: var(--background-color); /* Weißer Text auf dunklem Hintergrund für den Kopf */
+  font-weight: bold; /* Fettgedruckter Text im Tabellenkopf */
+}
+
+tbody tr:nth-child(even) td {
+    background-color: var(--border-color); /* Ein zebraartiger Effekt für eine bessere Lesbarkeit */
+    color: var(--background-color); /* Weißer Text auf dunklem Hintergrund für den Kopf */
+}
+
+
+/* Kritischer Pfad */
+p {
+  margin-top: 20px; /* Ein bisschen Abstand nach der Tabelle */
+  color: var(--text-color);
+}
+
+/* Dark Mode Switch styles */
+#darkMode {
+    position: fixed; /* To position it relative to the nearest positioned ancestor or the viewport */
+    top: 10px; /* 10 pixels from the top */
+    right: 10px; /* 10 pixels from the right */
+    display: flex; /* Use Flexbox for positioning the child elements */
+    align-items: center; /* Vertically align the middle */
+    gap: 10px; /* Gap between the switch and the label */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+.switch input {
+    display: none; /* Hide the default checkbox */
+}
+
+/* Slider styles */
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: .4s;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    background: linear-gradient(45deg, white 50%, black 50%); /* Diagonal gradient: half white, half black */
+}
+
+.slider.round {
+    border-radius: 25px;
+    color: var(--background-color);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 21px;
+    width: 21px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--background-color);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* When the checkbox is checked, move the circle to the right */
+.switch input:checked + .slider:before {
+    transform: translateX(24px);
 }

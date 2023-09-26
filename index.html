@@ -7,6 +7,13 @@
 </head>
 <body>
   <h1>Netzplan</h1>
+    <!-- Dark Mode Schalter -->
+    <div id="darkMode">
+    <label class="switch">
+      <input type="checkbox" id="darkModeToggle">
+      <span class="slider round"></span>
+    </label>
+    </div> 
     <div class="grid-container" id="grid-container">
         <!-- Hier werden die Arbeitspakete dynamisch eingefügt -->
 	<div class="node" id="Legende" style="grid-area: 1 / 1 / auto / auto;">
@@ -25,14 +32,6 @@
     <div id="arbeitspaketliste">
       <!-- The table will be inserted here by JavaScript -->
     </div>
-    <!-- Dark Mode Schalter -->
-    <div>
-    <label class="switch">
-      <input type="checkbox" id="darkModeToggle">
-      <span class="slider round"></span>
-    </label>
-      <span>Darkmode</span>
-     </div> 
     <script src="Netzplan.js"></script>
     <!-- <script src="revealValues.js"></script> -->
 </body>

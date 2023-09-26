@@ -636,6 +636,8 @@ const enableDarkMode = () => {
     document.body.classList.add("dark-mode");
     // 2. update darkMode in the LocalStorage
     localStorage.setItem("darkMode", "enabled");
+    // 3. set switch:
+    document.getElementById("darkModeToggle").checked = true; // Set the checkbox to "checked"
 }
 
 const disableDarkMode = () => {
@@ -643,6 +645,8 @@ const disableDarkMode = () => {
     document.body.classList.remove("dark-mode");
     // 2. update darkMode in the LocalStorage
     localStorage.setItem("darkMode", null);
+    // 3. set switch:
+    document.getElementById("darkModeToggle").checked = false; // Set the checkbox to "checked"
 }
 
 if (darkMode === "enabled") {
