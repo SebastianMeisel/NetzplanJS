@@ -120,11 +120,12 @@ body {
   position: absolute;
   bottom: 0;
   right: 0;
-  margin: 50px;
+  padding: 50px;
   height: 100px;
   width: 150px;
   font-size: 28px;
   transform: scale(1); /* Keep the size constant */
+  transform-origin: bottom right; /* Prevent the margin from scaling */
 }
 
 #Legende div {
@@ -133,11 +134,17 @@ body {
 }
 
 #hilfstext {
+  visibility: hidden;
   border: 1px solid;
   border-radius: 10px;
   background-color: var(--hilfstext-bg);
   color: var(--hilfstext-color);
   padding: 15px;
+  margin-left: 65px ;
+  margin-top: 20px;
+  z-index: 9999;
+  transform: scale(1); /* Keep the size constant */
+  transform-origin: top; /* Prevent the margin from scaling */
 }
 
 .lines {
@@ -273,7 +280,7 @@ body {
 }
 
 .hlines .wc {
-    top: 50%;
+    top: 37%;
     left: 0;
     position: absolute;
     height: 3px;

@@ -373,7 +373,6 @@ class Netzplan {
 
             // Erstelle den verticalLinesContainer für den aktuellen Nachfolger
             if (ap.gridRow == nachfolgerAP.gridRow) {
-		console.log("skip");
             } else if (ap.gridRow > nachfolgerAP.gridRow) {
 		// Füge .line-.nl-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
 		for (let i = ap.gridRow - 1; i >= nachfolgerAP.gridRow + 1; i--) {
@@ -413,7 +412,7 @@ class Netzplan {
 
             // Erstelle den horizontalLinesContainer für den aktuellen Nachfolger
 	    if (ap.gridColumn === nachfolgerAP.gridColumn - 2 || (nachfolgerAP.gridRow === 1 && ap.gridRow === 1)) {
-		console.log("skip");
+		// Skip line because it is a self-loop or a loop between two adjacent nodes
 	    } else if (ap.gridRow === nachfolgerAP.gridRow ) {
 		// Füge .line-.wt-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
 		for (let i = ap.gridColumn + 1; i <= nachfolgerAP.gridColumn - 1; i++) {
@@ -578,36 +577,44 @@ meinProjekt.generateRandomNetzplan();
 meinProjekt.zeigeNetzplan();
 meinProjekt.showArbeitsPaketListe();
 
+const hilfstext = document.getElementById("hilfstext");
+
 const hilfstexte = {
-    'FAZ': 'Frühester Anfangszeitpunkt (FAZ) = maximale FEZ der Vorgänger',
-    'FEZ': 'Frühester Endzeitpunkt (FEZ) = FAZ + D(auer)',
-    'SAZ': 'Spätester Anfangszeitpunkt (SAZ) = SEZ - D(auer)',
-    'SEZ': 'Spätester Endzeitpunkt (SEZ) = minimale SAZ der Nachfolger',
-    'GP': 'Gesamtpuffer (GP) = SAZ - FAZ = SEZ -FEZ',
-    'FP': 'Freier Puffer = minimale FAZ der Nachfolger - FEZ'
+    "FAZ": "Frühester Anfangszeitpunkt (FAZ) = maximale FEZ der Vorgänger",
+    "FEZ": "Frühester Endzeitpunkt (FEZ) = FAZ + D(auer)",
+    "SAZ": "Spätester Anfangszeitpunkt (SAZ) = SEZ - D(auer)",
+    "SEZ": "Spätester Endzeitpunkt (SEZ) = minimale SAZ der Nachfolger",
+    "GP": "Gesamtpuffer (GP) = SAZ - FAZ = SEZ -FEZ",
+    "FP": "Freier Puffer = minimale FAZ der Nachfolger - FEZ"
 };
+
+// Event listener to hide hilfstext when clicked
+hilfstext.addEventListener('click', hideHilfstext);
+
+function hideHilfstext() {
+    hilfstext.textContent = "";
+    hilfstext.style.visibility = "hidden";
+    aktiverHilfstext = false;
+}
 
 // Function to change the text color of an element
 let aktiverHilfstext = null; // Globale Variable, um den aktuellen Hilfstext zu speichern
 function showText(event) {
+    // First, hide any active hilfstext
     if (aktiverHilfstext) {
-        aktiverHilfstext.remove();
-        aktiverHilfstext = null;
+        hideHilfstext();
     } 
     // Check if the clicked element has one of the specified classes
-    if (['FAZ', 'FEZ', 'SAZ', 'SEZ', 'GP', 'FP'].includes(event.target.className)) {
-
+    if (["FAZ", "FEZ", "SAZ", "SEZ", "GP", "FP"].includes(event.target.className)) {
         event.target.style.color = "var(--text-color)";
         event.target.style.borderColor = "var(--border-color)";
-	const hilfstext = document.createElement('span');
 	hilfstext.textContent = hilfstexte[event.target.className];
-	hilfstext.style.position = 'absolute';
-	hilfstext.style.left = event.target.getBoundingClientRect().left+50 + 'px';
-	hilfstext.style.top = event.target.getBoundingClientRect().bottom+50 + 'px';
-	hilfstext.id = "hilfstext";
-	document.body.appendChild(hilfstext);
+	hilfstext.style.position = "absolute";
+	hilfstext.style.left = event.target.getBoundingClientRect().left+"px";
+	hilfstext.style.top = event.target.getBoundingClientRect().top+"px";
 	// Aktuellen Hilfstext speichern
-	aktiverHilfstext = hilfstext;
+	hilfstext.style.visibility = "visible";
+	aktiverHilfstext = true;
     }
 }
 
@@ -616,7 +623,7 @@ for (let i = 65; i <= 90; i++) { // ASCII values for A to Z
     const containerId = String.fromCharCode(i);
     const container = document.getElementById(containerId);
     if (container) {
-        container.addEventListener('click', showText);
+        container.addEventListener("click", showText);
     }
 }
 
@@ -650,3 +657,23 @@ darkModeToggle.addEventListener("change", function() {
 	disableDarkMode();
     }
 });
+
+// Prevent Legende from scaling
+// Get the element
+const legende = document.querySelector("#Legende");
+// Get the current scale of the page
+const scale = window.devicePixelRatio;
+
+
+// Set the scale of the element to 1
+legende.style.transform = `scale(${1 / scale})`;
+hilfstext.style.transform = `scale(${1 / scale})`;
+
+// Update the scale of the element whenever the window is resized
+window.addEventListener("resize", () => {
+    const scale = window.devicePixelRatio;
+    if (scale > 1.5 ) {
+	legende.style.transform = `scale(${1.5 / scale})`;
+    // Limit the scale of the element to 2
+    hilfstext.style.transform = `scale(${1.5 / scale})`;
+}});
