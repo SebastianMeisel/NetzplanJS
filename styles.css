@@ -3,18 +3,18 @@
     --background-color: white;
     --font-color: black;
     --border-color: black;
-    --text-color: blue;
+    --text-color: black;
     --connection-color: black;
     --hilfstext-bg: orange;
     --hilfstext-color: white;
 }
 
 /* Dark Mode Farbvariablen */
-[data-theme="dark"] {
+.dark-mode {
     --background-color: #121212;
     --font-color: #e0e0e0;
     --border-color: white;
-    --text-color: #1e88e5;
+    --text-color: white;
     --connection-color: white;
     --hilfstext-bg: #424242;
     --hilfstext-color: white;
@@ -312,7 +312,11 @@ body {
     height: 150px;
     width: 200px;
     font-size: 28px;
+}
+
+#Legende * { 
     text-align: center;
+    color: var(--text-color);
 }
 
 #hilfstext {

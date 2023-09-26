@@ -582,8 +582,8 @@ const hilfstexte = {
     'FEZ': 'Frühester Endzeitpunkt (FEZ) = FAZ + D(auer)',
     'SAZ': 'Spätester Anfangszeitpunkt (SAZ) = SEZ - D(auer)',
     'SEZ': 'Spätester Endzeitpunkt (SEZ) = minimale SAZ der Nachfolger',
-    'GP': 'Gesamtpuffer (GP) = ',
-    'FP': 'Freier Puffer'
+    'GP': 'Gesamtpuffer (GP) = SAZ - FAZ = SEZ -FEZ',
+    'FP': 'Freier Puffer = minimale FAZ der Nachfolger - FEZ'
 };
 
 // Function to change the text color of an element
@@ -607,8 +607,8 @@ function showText(event) {
 	const hilfstext = document.createElement('span');
 	hilfstext.textContent = hilfstexte[event.target.className];
 	hilfstext.style.position = 'absolute';
-	hilfstext.style.left = event.target.getBoundingClientRect().left+10 + 'px';
-	hilfstext.style.top = event.target.getBoundingClientRect().bottom+10 + 'px';
+	hilfstext.style.left = event.target.getBoundingClientRect().left+50 + 'px';
+	hilfstext.style.top = event.target.getBoundingClientRect().bottom+50 + 'px';
 	hilfstext.id = "hilfstext";
 	document.body.appendChild(hilfstext);
 	// Aktuellen Hilfstext speichern
@@ -625,24 +625,33 @@ for (let i = 65; i <= 90; i++) { // ASCII values for A to Z
     }
 }
 
+// Überprüfen, ob ein Dark Mode gesetzt ist
+let darkMode = localStorage.getItem("darkMode");
 const darkModeToggle = document.getElementById("darkModeToggle");
 const body = document.body;
+const enableDarkMode = () => {
+    // 1. add the class darkmode to the body
+    document.body.classList.add("dark-mode");
+    // 2. update darkMode in the LocalStorage
+    localStorage.setItem("darkMode", "enabled");
+}
 
-// Überprüfen, ob ein Dark Mode Cookie gesetzt ist
-if (document.cookie.split(';').some((item) => item.trim().startsWith('darkMode='))) {
-    const darkModeValue = document.cookie.replace(/(?:(?:^|.*;\s*)darkMode\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    if (darkModeValue === "enabled") {
-        body.classList.add("dark-mode");
-        darkModeToggle.checked = true;
-    }
+const disableDarkMode = () => {
+    // 1. add the class darkmode to the body
+    document.body.classList.remove("dark-mode");
+    // 2. update darkMode in the LocalStorage
+    localStorage.setItem("darkMode", null);
+}
+
+if (darkMode === "enabled") {
+    enableDarkMode();
 }
 
 darkModeToggle.addEventListener("change", function() {
-    if (this.checked) {
-        body.classList.add("dark-mode");
-        document.cookie = "darkMode=enabled; path=/";
+    darkMode = localStorage.getItem("darkMode");
+    if (darkMode !== "enabled") {
+	enableDarkMode();
     } else {
-        body.classList.remove("dark-mode");
-        document.cookie = "darkMode=disabled; path=/";
+	disableDarkMode();
     }
 });
