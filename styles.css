@@ -74,7 +74,7 @@ body {
   border: 1px solid var(--border-color);
   font-size: 95%;
   text-align: center;
-  color: var(--text-color);
+  border-color: var(--text-color);
 }
 
 .FP {
@@ -82,7 +82,7 @@ body {
   border: 1px solid var(--border-color);
   font-size: 95%;
   text-align: center;
-  color: var(--text-color);
+  border-color: var(--text-color);
 }
 
 .SAZ {
@@ -93,6 +93,11 @@ body {
 .SEZ {
   grid-area: SEZ;
   text-align: right;
+}
+
+.FAZ, .FEZ, .SAZ, .SEZ, .GP, .FP {
+    color: var(--background-color);
+    cursor: pointer;
 }
 
 /* Connection styles */
@@ -116,12 +121,13 @@ body {
   bottom: 0;
   right: 0;
   margin: 50px;
-  height: 150px;
-  width: 200px;
+  height: 100px;
+  width: 150px;
   font-size: 28px;
+  transform: scale(1); /* Keep the size constant */
 }
 
-#Legende * {
+#Legende div {
   text-align: center;
   color: var(--text-color);
 }

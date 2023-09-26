@@ -431,7 +431,6 @@ class Netzplan {
 		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow;
                     let lineDiv = document.createElement('div');
                     lineDiv.className = 'wc';
-		    lineDiv.textContent = ap.id+"->"+nachfolgerID;
 		    lineDiv.style.backgroundColor = lineColor;
                     horizontalLinesContainer.appendChild(lineDiv);
 		    // Füge den horizontalLinesContainer in das Grid ein
@@ -454,7 +453,6 @@ class Netzplan {
 		    horizontalLinesContainer.style.gridRowStart = nachfolgerAP.gridRow + 1;
                     let lineDiv = document.createElement('div');
                     lineDiv.className = 'wt';
-		    lineDiv.textContent = ap.id+"->"+nachfolgerID;
 		    lineDiv.style.backgroundColor = lineColor;
                     horizontalLinesContainer.appendChild(lineDiv);
 		    // Füge den horizontalLinesContainer in das Grid ein
@@ -527,6 +525,7 @@ class Netzplan {
             const infoDiv = document.createElement("div");
             infoDiv.classList.add(info);
             infoDiv.textContent = `${ap[info]}`;
+	    infoDiv.title = info;
             apElement.appendChild(infoDiv);
         });
 
@@ -598,14 +597,8 @@ function showText(event) {
     // Check if the clicked element has one of the specified classes
     if (['FAZ', 'FEZ', 'SAZ', 'SEZ', 'GP', 'FP'].includes(event.target.className)) {
 
-	// Farbanpassung je nach Modus
-        if (document.body.classList.contains('dark-mode')) {
-            event.target.style.color = "white";
-            event.target.style.borderColor = "white";
-        } else {
-            event.target.style.color = "black";
-            event.target.style.borderColor = "whiteblack";
-        }
+        event.target.style.color = "var(--text-color)";
+        event.target.style.borderColor = "var(--border-color)";
 	const hilfstext = document.createElement('span');
 	hilfstext.textContent = hilfstexte[event.target.className];
 	hilfstext.style.position = 'absolute';
