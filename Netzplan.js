@@ -174,7 +174,7 @@ class Projekt {
         table.appendChild(thead);
 
         // Füge die Daten hinzu
-        this.arbeitspakete.forEach(ap => {	    
+        this.arbeitspakete.forEach(ap => {
             const row = document.createElement("tr");
             const cells = [
                 ap.id,
@@ -202,6 +202,7 @@ class Projekt {
 
         // Kritischen Pfad ausgeben
         const kritPathElement = document.createElement("p");
+        kritPathElement.id = "KP";
         kritPathElement.textContent = "Kritischer Pfad: [" + this.kritischerPfad.reverse().join(" - ") + "]";
         container.appendChild(kritPathElement);
     }
@@ -681,3 +682,9 @@ window.addEventListener("resize", () => {
     // Limit the scale of the element to 2
     hilfstext.style.transform = `scale(${1.5 / scale})`;
 }});
+
+
+
+// Local Variables:
+// jinx-languages: "de"
+// End:
