@@ -118,6 +118,32 @@ class Arbeitspaket {
       // Wenn die Position frei ist, setzen Sie die Position des Arbeitspakets
       this.gridRow = row;
       this.gridColumn = col;
+      // Ermitteln der aktuellen maxRows und maxColumns
+      const gridStyles = window.getComputedStyle(
+        projekt.netzplan.gridContainer,
+      );
+      const maxRows = gridStyles
+        .getPropertyValue("grid-template-rows")
+        .split(" ").length;
+      const maxColumns = gridStyles
+        .getPropertyValue("grid-template-columns")
+        .split(" ").length;
+
+      // Überprüfen, ob das Grid erweitert werden muss
+      if (this.gridRow > maxRows) {
+        projekt.netzplan.gridContainer.style.gridTemplateRows = `${new Array(
+          this.gridRow,
+        )
+          .fill("100px")
+          .join(" ")}`;
+      }
+      if (this.gridColumn > maxColumns) {
+        projekt.netzplan.gridContainer.style.gridTemplateColumns = `${new Array(
+          this.gridColumn,
+        )
+          .fill("100px")
+          .join(" ")}`;
+      }
     }
   }
 }
@@ -128,6 +154,7 @@ class Projekt {
     this.id = id; // Eindeutige ID für das Projekt
     this.arbeitspakete = []; // Liste aller Arbeitspakete im Projekt
     this.kritischerPfad = []; // Liste der IDs der Arbeitspakete im kritischen Pfad
+    this.netzplan = new Netzplan(this);
   }
 
   // Methode zum Generieren eines zufälligen Netzplans
@@ -330,11 +357,10 @@ class Projekt {
   }
 
   zeigeNetzplan() {
-    const netzplan = new Netzplan(this);
     if (this.arbeitspakete[0].FEZ === 0) {
       this.durchRechnen(); // Durchrechnen vor dem Anzeigen der Liste
     }
-    netzplan.zeichne();
+    this.netzplan.zeichne();
   }
 }
 
