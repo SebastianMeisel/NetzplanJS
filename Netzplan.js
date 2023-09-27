@@ -90,6 +90,36 @@ class Arbeitspaket {
     // Entferne das Arbeitspaket selbst aus seinem nachfolger-Array
     this.nachfolger = this.nachfolger.filter((nfId) => nfId !== this.id);
   }
+
+  setGridPosition(row, col, projekt, retryCount = 0) {
+    const maxRetries = 10; // or any other reasonable number
+
+    // Abbrechen, falls zuoft erfolglos
+    if (retryCount >= maxRetries) {
+      return;
+    }
+
+    // Überprüfen, ob die gewünschte Position bereits von einem anderen Arbeitspaket belegt ist
+    const existingAP = projekt.arbeitspakete.find(
+      (ap) => ap.gridRow === row && ap.gridColumn === col && ap.id != this.id,
+    );
+    if (existingAP) {
+      // Wenn ja, verschieben Sie das Arbeitspaket zwei Zeilen tiefer
+      this.gridRow = row + 2;
+      this.gridColumn = col;
+      // Überprüfen Sie erneut, ob die neue Position frei ist
+      this.setGridPosition(
+        this.gridRow,
+        this.gridColumn,
+        projekt,
+        retryCount + 1,
+      );
+    } else {
+      // Wenn die Position frei ist, setzen Sie die Position des Arbeitspakets
+      this.gridRow = row;
+      this.gridColumn = col;
+    }
+  }
 }
 
 class Projekt {
@@ -539,12 +569,11 @@ class Netzplan {
     ap.gridColumn = spalte;
     ap.gridRow = zeile;
     this.bereinigeVorgaenger(ap, zeile);
-    ap.gridColumn = spalte;
-    ap.gridRow = zeile;
+    ap.setGridPosition(zeile, spalte, this.projekt);
 
     const apElement = this.erstelleArbeitspaketElement(ap);
-    apElement.style.gridColumn = spalte;
-    apElement.style.gridRow = zeile;
+    apElement.style.gridColumn = ap.gridColumn;
+    apElement.style.gridRow = ap.gridRow;
     this.gridContainer.appendChild(apElement);
 
     this.platzierteAPs.add(ap.id);
