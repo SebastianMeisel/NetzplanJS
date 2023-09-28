@@ -1,66 +1,93 @@
+// Definiere eine Klasse namens "Arbeitspaket"
 class Arbeitspaket {
+  // Konstruktor der Klasse, der aufgerufen wird, wenn ein neues Objekt erstellt wird
   constructor(id, dauer, vorgaenger = [], nachfolger = []) {
-    this.id = id;
-    this.dauer = dauer;
-    this.vorgaenger = vorgaenger;
-    this.nachfolger = nachfolger;
+    this.id = id; // Eindeutige Identifikationsnummer des Arbeitspakets
+    this.dauer = dauer; // Dauer des Arbeitspakets in Zeiteinheiten
+    this.vorgaenger = vorgaenger; // Liste von Arbeitspaketen, die vor diesem Arbeitspaket abgeschlossen werden müssen
+    this.nachfolger = nachfolger; // Liste von Arbeitspaketen, die nach diesem Arbeitspaket beginnen können
+
+    // FAZ: Frühester Anfangszeitpunkt
     this.FAZ = 0;
+    // FEZ: Frühester Endzeitpunkt
     this.FEZ = 0;
+    // SAZ: Spätester Anfangszeitpunkt
     this.SAZ = 0;
+    // SEZ: Spätester Endzeitpunkt
     this.SEZ = 0;
+    // GP: Gesamtpuffer
     this.GP = 0;
+    // FP: Freier Puffer
     this.FP = 0;
-    this.gridRow = null; // Platz im Grid des Netzplans
-    this.gridColumn = null; // Platz im Grid des Netzplans
+
+    // Platz im Grid des Netzplans (für die Darstellung)
+    this.gridRow = null;
+    this.gridColumn = null;
   }
 
+  // Methode, um dieses Arbeitspaket als Nachfolger eines anderen Arbeitspakets zu definieren
   Folge(vorgaengerID, projekt) {
-    // Füge dieses Arbeitspaket als Nachfolger des Vorgängers hinzu
+    // Suche das Arbeitspaket mit der gegebenen ID im Projekt
     const vorgaengerAP = projekt.arbeitspakete.find(
       (ap) => ap.id === vorgaengerID,
     );
+    // Wenn das Arbeitspaket gefunden wurde
     if (vorgaengerAP) {
+      // Füge die ID dieses Arbeitspakets zur Liste der Nachfolger des gefundenen Arbeitspakets hinzu
       vorgaengerAP.nachfolger.push(this.id);
+      // Füge die ID des gefundenen Arbeitspakets zur Liste der Vorgänger dieses Arbeitspakets hinzu
       this.vorgaenger.push(vorgaengerID);
     }
   }
 
+  // Methode zur Berechnung der frühesten Anfangs- und Endzeit des Arbeitspakets
   getFXZ(projekt) {
-    // Berechnet die früheste Anfangs- und Endzeit des Arbeitspakets
+    // Wenn es Vorgänger gibt
     this.FAZ = this.vorgaenger.length
       ? Math.max(
           ...this.vorgaenger.map((vorgaengerID) => {
+            // Suche den Vorgänger im Projekt
             const vorgaenger = projekt.arbeitspakete.find(
               (ap) => ap.id === vorgaengerID,
             );
+            // Gibt den frühesten Endzeitpunkt des Vorgängers zurück oder 0, wenn nicht gefunden
             return vorgaenger ? vorgaenger.FEZ : 0;
           }),
         )
       : 0;
+    // Der früheste Endzeitpunkt ist die Dauer des Arbeitspakets plus dessen frühester Anfangszeitpunkt
     this.FEZ = this.dauer + this.FAZ;
     return [this.FAZ, this.FEZ];
   }
 
+  // Methode zur Berechnung der spätesten Anfangs- und Endzeit sowie der Puffer des Arbeitspakets
   getSXZ(projekt) {
-    // Berechnet die späteste Anfangs- und Endzeit sowie die Puffer des Arbeitspakets
+    // Wenn es Nachfolger gibt
     this.SEZ = this.nachfolger.length
       ? Math.min(
           ...this.nachfolger.map((nachfolgerID) => {
+            // Suche den Nachfolger im Projekt
             const nachfolger = projekt.arbeitspakete.find(
               (ap) => ap.id === nachfolgerID,
             );
+            // Gibt den spätesten Anfangszeitpunkt des Nachfolgers zurück oder Infinity, wenn nicht gefunden
             return nachfolger ? nachfolger.SAZ : Infinity;
           }),
         )
       : this.FEZ;
+    // Der späteste Anfangszeitpunkt ist der späteste Endzeitpunkt minus die Dauer des Arbeitspakets
     this.SAZ = this.SEZ - this.dauer;
+    // Der Gesamtpuffer ist der Unterschied zwischen dem spätesten und dem frühesten Endzeitpunkt
     this.GP = this.SEZ - this.FEZ;
+    // Der freie Puffer wird berechnet
     this.FP = this.nachfolger.length
       ? Math.min(
           ...this.nachfolger.map((nachfolgerID) => {
+            // Suche den Nachfolger im Projekt
             const nachfolger = projekt.arbeitspakete.find(
               (ap) => ap.id === nachfolgerID,
             );
+            // Gibt den frühesten Anfangszeitpunkt des Nachfolgers zurück oder Infinity, wenn nicht gefunden
             return nachfolger ? nachfolger.FAZ : Infinity;
           }),
         ) - this.FEZ
@@ -69,87 +96,35 @@ class Arbeitspaket {
   }
 
   sortiereNachfolger(projekt) {
-    // Überprüfen, ob das Projekt definiert ist
+    // Überprüfen, ob das Projekt definiert ist und ob es Arbeitspakete enthält
     if (!projekt || !projekt.arbeitspakete) {
-      return;
+      return; // Beende die Funktion, wenn nicht
     }
 
-    // Sortiere nachfolger basierend auf dem GP-Wert
+    // Sortiere die Nachfolger basierend auf dem GP-Wert (Gesamtpuffer)
     this.nachfolger.sort((aId, bId) => {
+      // Finde die Arbeitspakete 'a' und 'b' basierend auf ihren IDs
       const a = projekt.arbeitspakete.find((ap) => ap.id === aId);
       const b = projekt.arbeitspakete.find((ap) => ap.id === bId);
 
       // Überprüfen, ob das Arbeitspaket 'a' oder 'b' gefunden wurde
       if (!a || !b) {
-        return 0;
+        return 0; // Wenn eines der Arbeitspakete nicht gefunden wird, gebe 0 zurück (keine Sortierung)
       }
 
-      return a.GP - b.GP; // Sortiere aufsteigend nach GP
+      // Sortiere aufsteigend nach dem GP-Wert
+      return a.GP - b.GP;
     });
 
-    // Entferne das Arbeitspaket selbst aus seinem nachfolger-Array
+    // Entferne das Arbeitspaket selbst aus seinem Nachfolger-Array
+    // (Ein Arbeitspaket sollte nicht sein eigener Nachfolger sein)
     this.nachfolger = this.nachfolger.filter((nfId) => nfId !== this.id);
-  }
-
-  setGridPosition(row, col, projekt, retryCount = 0) {
-    const maxRetries = 10; // or any other reasonable number
-
-    // Abbrechen, falls zuoft erfolglos
-    if (retryCount >= maxRetries) {
-      return;
-    }
-
-    // Überprüfen, ob die gewünschte Position bereits von einem anderen Arbeitspaket belegt ist
-    const existingAP = projekt.arbeitspakete.find(
-      (ap) => ap.gridRow === row && ap.gridColumn === col && ap.id != this.id,
-    );
-    if (existingAP) {
-      // Wenn ja, verschieben Sie das Arbeitspaket zwei Zeilen tiefer
-      this.gridRow = row + 2;
-      this.gridColumn = col;
-      // Überprüfen Sie erneut, ob die neue Position frei ist
-      this.setGridPosition(
-        this.gridRow,
-        this.gridColumn,
-        projekt,
-        retryCount + 1,
-      );
-    } else {
-      // Wenn die Position frei ist, setzen Sie die Position des Arbeitspakets
-      this.gridRow = row;
-      this.gridColumn = col;
-      // Ermitteln der aktuellen maxRows und maxColumns
-      const gridStyles = window.getComputedStyle(
-        projekt.netzplan.gridContainer,
-      );
-      const maxRows = gridStyles
-        .getPropertyValue("grid-template-rows")
-        .split(" ").length;
-      const maxColumns = gridStyles
-        .getPropertyValue("grid-template-columns")
-        .split(" ").length;
-
-      // Überprüfen, ob das Grid erweitert werden muss
-      if (this.gridRow > maxRows) {
-        projekt.netzplan.gridContainer.style.gridTemplateRows = `${new Array(
-          this.gridRow,
-        )
-          .fill("100px")
-          .join(" ")}`;
-      }
-      if (this.gridColumn > maxColumns) {
-        projekt.netzplan.gridContainer.style.gridTemplateColumns = `${new Array(
-          this.gridColumn,
-        )
-          .fill("100px")
-          .join(" ")}`;
-      }
-    }
   }
 }
 
+// Definiere eine Klasse namens "Projekt"
 class Projekt {
-  // Konstruktor für die Projekt-Klasse
+  // Konstruktor der Klasse, der aufgerufen wird, wenn ein neues Objekt erstellt wird
   constructor(id) {
     this.id = id; // Eindeutige ID für das Projekt
     this.arbeitspakete = []; // Liste aller Arbeitspakete im Projekt
@@ -379,10 +354,181 @@ class Netzplan {
     this.gridContainer.style.gridTemplateRows = `repeat(8, 100px)`;
 
     const startAp = this.projekt.arbeitspakete[0];
-    this.einfuegenArbeitspakete(startAp, 1, 1);
+    this.bestimmePositionen(startAp, 1, 1);
 
-    // Rufe verbindeNodes für jedes Arbeitspaket auf
-    this.arbeitspakete.forEach((ap) => this.verbindeNodes(ap.id));
+    // Nachdem alle Positionen festgelegt wurden, erstelle die Arbeitspaket-Elemente und Nodeverbindungen
+    this.arbeitspakete.forEach((ap) => {
+      this.setzeArbeitspaketInGrid(ap, ap.gridColumn, ap.gridRow);
+      this.verbindeNodes(ap.id);
+    });
+  }
+
+  bestimmePositionen(ap, spalte, zeile) {
+    if (this.platzierteAPs.has(ap.id)) {
+      if (ap.gridColumn < spalte) {
+        ap.gridColumn = spalte;
+      }
+      return;
+    }
+
+    ap.gridColumn = spalte;
+    ap.gridRow = zeile;
+    this.platzierteAPs.add(ap.id);
+    this.setGridPosition(ap, zeile, spalte);
+    this.sortiereUndBestimmePositionenDerNachfolger(ap, spalte, zeile);
+  }
+
+  sortiereUndBestimmePositionenDerNachfolger(ap, spalte, zeile) {
+    let naechsteZeile = zeile;
+    ap.sortiereNachfolger(this.projekt);
+    ap.nachfolger = [...new Set(ap.nachfolger)];
+    const l = ap.nachfolger.length;
+    if (l === 0) {
+      return;
+    }
+    for (var i = 0; i < l; i++) {
+      const nachfolgerId = ap.nachfolger[i];
+      const nachfolger = this.projekt.arbeitspakete.find(
+        (a) => a.id === nachfolgerId,
+      );
+      naechsteZeile = i * 2 + 1;
+      this.bestimmePositionen(nachfolger, spalte + 2, naechsteZeile);
+    }
+  }
+
+  setGridPosition(arbeitspaket, row, col, retryCount = 0) {
+    const maxRetries = 10;
+
+    if (retryCount >= maxRetries) {
+      return;
+    }
+
+    const nachfolgerInSameOrPreviousColumn = arbeitspaket.nachfolger.some(
+      (nachfolgerId) => {
+        const nachfolgerAP = this.arbeitspakete.find(
+          (ap) => ap.id === nachfolgerId,
+        );
+        if (
+          nachfolgerAP &&
+          nachfolgerAP.gridColumn &&
+          nachfolgerAP.gridColumn <= col
+        ) {
+          console.log(
+            arbeitspaket.id +
+              "->" +
+              nachfolgerId +
+              "(" +
+              nachfolgerAP.gridColumn +
+              "," +
+              nachfolgerAP.gridRow +
+              ")",
+          );
+          nachfolgerAP.gridColumn = col + 2;
+          this.setGridPosition(
+            nachfolgerAP,
+            nachfolgerAP.gridRow,
+            nachfolgerAP.gridColumn + 2,
+            retryCount + 1,
+          );
+        }
+      },
+    );
+  }
+
+  einfuegenArbeitspakete(ap, spalte, zeile) {
+    // Wenn der Arbeitspaket bereits platziert wurde, aber nicht in der gewünschten Spalte,
+    // dann verschieben wir ihn zur gewünschten Spalte.
+    if (this.platzierteAPs.has(ap.id)) {
+      if (ap.gridColumn < spalte) {
+        ap.gridColumn = spalte;
+        const apElement = document.getElementById(ap.id);
+        apElement.style.gridColumn = spalte;
+      }
+      return;
+    }
+
+    this.setzeArbeitspaketInGrid(ap, spalte, zeile);
+    this.sortiereUndPlatziereNachfolger(ap, spalte, zeile);
+  }
+
+  setzeArbeitspaketInGrid(ap, spalte, zeile) {
+    ap.gridColumn = spalte;
+    ap.gridRow = zeile;
+    this.bereinigeVorgaenger(ap, zeile);
+
+    const apElement = this.erstelleArbeitspaketElement(ap);
+    apElement.style.gridColumn = ap.gridColumn;
+    apElement.style.gridRow = ap.gridRow;
+    this.gridContainer.appendChild(apElement);
+
+    this.platzierteAPs.add(ap.id);
+  }
+
+  erstelleArbeitspaketElement(ap) {
+    const apElement = document.createElement("div");
+    apElement.classList.add("node");
+    apElement.id = ap.id;
+
+    const idDiv = document.createElement("div");
+    idDiv.classList.add("ID");
+    idDiv.textContent = ap.id;
+    apElement.appendChild(idDiv);
+
+    const infos = ["FAZ", "FEZ", "SAZ", "SEZ", "dauer", "GP", "FP"];
+    infos.forEach((info) => {
+      const infoDiv = document.createElement("div");
+      infoDiv.classList.add(info);
+      infoDiv.textContent = `${ap[info]}`;
+      infoDiv.title = info;
+      apElement.appendChild(infoDiv);
+    });
+
+    return apElement;
+  }
+
+  sortiereUndPlatziereNachfolger(ap, spalte, zeile) {
+    let naechsteZeile = zeile;
+    let d = new Date();
+    ap.sortiereNachfolger(this.projekt);
+    ap.nachfolger = [...new Set(ap.nachfolger)];
+    const l = ap.nachfolger.length;
+    if (l === 0) {
+      return;
+    }
+    for (var i = 0; i < l; i++) {
+      const nachfolgerId = ap.nachfolger[i];
+      const nachfolger = this.projekt.arbeitspakete.find(
+        (a) => a.id === nachfolgerId,
+      );
+      naechsteZeile = i * 2 + 1;
+      if (!this.platzierteAPs.has(nachfolgerId)) {
+        this.einfuegenArbeitspakete(nachfolger, spalte + 2, naechsteZeile);
+      }
+    }
+  }
+
+  // Methode zum Bereinigen der Vorgänger
+  bereinigeVorgaenger(ap) {
+    const vorgaengerInDerselbenZeile = [];
+    const vorgaengerInAndererZeile = [];
+    ap.vorgaenger.forEach((vgId) => {
+      const vg = this.arbeitspakete.find((a) => a.id === vgId);
+      if (vg && vg.gridRow === ap.gridRow) {
+        vorgaengerInDerselbenZeile.push(vgId);
+      } else {
+        vorgaengerInAndererZeile.push(vgId);
+      }
+    });
+
+    if (vorgaengerInDerselbenZeile.length > 1) {
+      // Behalte nur den letzten Vorgänger in derselben Zeile
+      const letzterVorgaenger =
+        vorgaengerInDerselbenZeile[vorgaengerInDerselbenZeile.length - 1];
+      ap.vorgaenger = ap.vorgaenger.filter(
+        (vgId) =>
+          vgId === letzterVorgaenger || vorgaengerInAndererZeile.includes(vgId),
+      );
+    }
   }
 
   verbindeNodes(apID) {
@@ -497,10 +643,7 @@ class Netzplan {
       }
 
       // Erstelle den horizontalLinesContainer für den aktuellen Nachfolger
-      if (
-        ap.gridColumn === nachfolgerAP.gridColumn - 2 ||
-        (nachfolgerAP.gridRow === 1 && ap.gridRow === 1)
-      ) {
+      if (ap.gridColumn === nachfolgerAP.gridColumn - 2) {
         // Skip line because it is a self-loop or a loop between two adjacent nodes
       } else if (ap.gridRow === nachfolgerAP.gridRow) {
         // Füge .line-.wt-DIVs in der gridColumn neben dem Arbeitspaket (AP) ein
@@ -573,103 +716,6 @@ class Netzplan {
         }
       }
     });
-  }
-
-  einfuegenArbeitspakete(ap, spalte, zeile) {
-    // Wenn der Arbeitspaket bereits platziert wurde, aber nicht in der gewünschten Spalte,
-    // dann verschieben wir ihn zur gewünschten Spalte.
-    if (this.platzierteAPs.has(ap.id)) {
-      if (ap.gridColumn < spalte) {
-        ap.gridColumn = spalte;
-        const apElement = document.getElementById(ap.id);
-        apElement.style.gridColumn = spalte;
-      }
-      return;
-    }
-
-    this.setzeArbeitspaketInGrid(ap, spalte, zeile);
-    this.sortiereUndPlatziereNachfolger(ap, spalte, zeile);
-  }
-
-  setzeArbeitspaketInGrid(ap, spalte, zeile) {
-    ap.gridColumn = spalte;
-    ap.gridRow = zeile;
-    this.bereinigeVorgaenger(ap, zeile);
-    ap.setGridPosition(zeile, spalte, this.projekt);
-
-    const apElement = this.erstelleArbeitspaketElement(ap);
-    apElement.style.gridColumn = ap.gridColumn;
-    apElement.style.gridRow = ap.gridRow;
-    this.gridContainer.appendChild(apElement);
-
-    this.platzierteAPs.add(ap.id);
-  }
-
-  erstelleArbeitspaketElement(ap) {
-    const apElement = document.createElement("div");
-    apElement.classList.add("node");
-    apElement.id = ap.id;
-
-    const idDiv = document.createElement("div");
-    idDiv.classList.add("ID");
-    idDiv.textContent = ap.id;
-    apElement.appendChild(idDiv);
-
-    const infos = ["FAZ", "FEZ", "SAZ", "SEZ", "dauer", "GP", "FP"];
-    infos.forEach((info) => {
-      const infoDiv = document.createElement("div");
-      infoDiv.classList.add(info);
-      infoDiv.textContent = `${ap[info]}`;
-      infoDiv.title = info;
-      apElement.appendChild(infoDiv);
-    });
-
-    return apElement;
-  }
-
-  sortiereUndPlatziereNachfolger(ap, spalte, zeile) {
-    let naechsteZeile = zeile;
-    let d = new Date();
-    ap.sortiereNachfolger(this.projekt);
-    ap.nachfolger = [...new Set(ap.nachfolger)];
-    const l = ap.nachfolger.length;
-    if (l === 0) {
-      return;
-    }
-    for (var i = 0; i < l; i++) {
-      const nachfolgerId = ap.nachfolger[i];
-      const nachfolger = this.projekt.arbeitspakete.find(
-        (a) => a.id === nachfolgerId,
-      );
-      naechsteZeile = i * 2 + 1;
-      if (!this.platzierteAPs.has(nachfolgerId)) {
-        this.einfuegenArbeitspakete(nachfolger, spalte + 2, naechsteZeile);
-      }
-    }
-  }
-
-  // Methode zum Bereinigen der Vorgänger
-  bereinigeVorgaenger(ap) {
-    const vorgaengerInDerselbenZeile = [];
-    const vorgaengerInAndererZeile = [];
-    ap.vorgaenger.forEach((vgId) => {
-      const vg = this.arbeitspakete.find((a) => a.id === vgId);
-      if (vg && vg.gridRow === ap.gridRow) {
-        vorgaengerInDerselbenZeile.push(vgId);
-      } else {
-        vorgaengerInAndererZeile.push(vgId);
-      }
-    });
-
-    if (vorgaengerInDerselbenZeile.length > 1) {
-      // Behalte nur den letzten Vorgänger in derselben Zeile
-      const letzterVorgaenger =
-        vorgaengerInDerselbenZeile[vorgaengerInDerselbenZeile.length - 1];
-      ap.vorgaenger = ap.vorgaenger.filter(
-        (vgId) =>
-          vgId === letzterVorgaenger || vorgaengerInAndererZeile.includes(vgId),
-      );
-    }
   }
 }
 
