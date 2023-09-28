@@ -40,16 +40,9 @@ body {
     'D GP FP'
     'SAZ . SEZ';
   height: fit-content;
+  z-index: 999;
 }
 
-.ID {
-  grid-area: ID;
-  border: 1px solid var(--border-color);
-  font-size: 95%;
-  line-height: 100%;
-  text-align: center;
-  color: var(--text-color);
-}
 
 .FAZ {
   grid-area: FAZ;
@@ -63,29 +56,19 @@ body {
   vertical-align: text-bottom;
 }
 
-.dauer {
-  grid-area: D;
+.ID {   grid-area: ID;}
+.dauer {   grid-area: D;}
+.GP {   grid-area: GP;}
+.FP {   grid-area: FP;}
+
+
+.ID, .dauer, .GP, .FP  {
   border: 1px solid var(--border-color);
   font-size: 95%;
   text-align: center;
   color: var(--text-color);
 }
 
-.GP {
-  grid-area: GP;
-  border: 1px solid var(--border-color);
-  font-size: 95%;
-  text-align: center;
-  border-color: var(--text-color);
-}
-
-.FP {
-  grid-area: FP;
-  border: 1px solid var(--border-color);
-  font-size: 95%;
-  text-align: center;
-  border-color: var(--text-color);
-}
 
 .SAZ {
   grid-area: SAZ;
@@ -157,12 +140,24 @@ body {
   position: relative;
 }
 
+
+.lines * {
+    height: 2px;
+    background: var(--connection-color);
+}
+
+
+.lines .o, .so, .no, .w, .sw, .nw {
+    height: 3px;
+    background: var(--connection-color);
+}
+
+
+
 .lines .no {
   position: absolute;
   left: 0;
   margin: 0;
-  height: 2px;
-  background: var(--border-color);
   width: 70.71%;
   top: 50%; /* Position it at the middle vertically */
   transform: rotate(-45deg); /* Shift it up by half its height to center it */
@@ -172,8 +167,6 @@ body {
 .lines .so {
   position: absolute;
   left: 0;
-  height: 2px;
-  background: blackvar(--connection-color);
   width: 70.71%;
   top: 50%; /* Position it at the middle vertically */
   transform: rotate(45deg); /* Shift it up by half its height to center it */
@@ -183,8 +176,6 @@ body {
 .lines .o {
   left: 0;
   position: absolute;
-  height: 3px;
-  background: var(--connection-color);
   width: 50%;
   top: 50%; /* Position it at the middle vertically */
 }
@@ -193,8 +184,6 @@ body {
 .lines .nw {
   position: absolute;
   right: 0;
-  height: 2px;
-  background: var(--connection-color);
   width: 70.71%;
   top: 50%; /* Position it at the middle vertically */
   transform: rotate(45deg); /* Shift it up by half its height to center it */
@@ -204,8 +193,6 @@ body {
 .lines .sw {
   position: absolute;
   right: 0;
-  height: 2px;
-  background: var(--connection-color);
   width: 70.71%;
   top: 50%; /* Position it at the middle vertically */
   transform: rotate(-45deg); /* Shift it up by half its height to center it */
@@ -215,8 +202,6 @@ body {
 .lines .w {
   right: 0;
   position: absolute;
-  height: 3px;
-  background: var(--connection-color);
   width: 50%;
   top: 50%; /* Position it at the middle vertically */
 }
@@ -226,9 +211,7 @@ body {
   top:50%;
   left: 0%;
   position: absolute;
-  height: 2px;
   width: 100%;
-  background: var(--connection-color);
   transform: rotate(90deg); /* Shift it up by half its height to center it */
   transform-origin: 50% 50%;
 }
@@ -238,9 +221,7 @@ body {
   top:50%;
   right: 0%;
   position: absolute;
-  height: 2px;
   width: 100%;
-  background: black;
   transform: rotate(90deg); /* Shift it up by half its height to center it */
   transform-origin: 50% 50%;
 }
@@ -253,13 +234,10 @@ body {
     position: relative;
 }
 
-.hlines-end {
-    display: grid;
-    top: 0%;
-    left: 0%;
-    width: 50%;
-    height:100%;
-    position: relative;
+
+.hlines * {
+    height: 3px;
+    background: var(--connection-color);
 }
 
 .hlines-start {
@@ -271,13 +249,29 @@ body {
     position: relative;
 }
 
+.hlines-start * {
+    height: 3px;
+    background: var(--connection-color);
+}
+
+.hlines-end {
+    display: grid;
+    top: 0%;
+    left: 0%;
+    width: 50%;
+    height:100%;
+    position: relative;
+}
+
+.hlines-end * {
+    height: 3px;
+    background: var(--connection-color);
+}
 
 .hlines .wt {
     top: -10px;
     left: 2%;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -285,8 +279,6 @@ body {
     top: 37%;
     left: 0;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -294,8 +286,6 @@ body {
 .hlines .ob {
     bottom: 10px;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -303,8 +293,6 @@ body {
     top: -10px;
     left: 2%;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -312,8 +300,6 @@ body {
 .hlines-start .ob {
     bottom: 10px;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -321,8 +307,6 @@ body {
     top: -10px;
     left: 2%;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -330,8 +314,6 @@ body {
     top: 50%;
     left: 2%;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -339,8 +321,6 @@ body {
 .hlines-end .ob {
     bottom: 10px;
     position: absolute;
-    height: 3px;
-    background: var(--connection-color);
     width: 100%;
 }
 
@@ -375,9 +355,9 @@ tbody tr:nth-child(even) td {
 
 
 /* Kritischer Pfad */
-p {
+#KP {
   margin-top: 20px; /* Ein bisschen Abstand nach der Tabelle */
-  color: var(--text-color);
+  color: red;
 }
 
 /* Dark Mode Switch styles */
@@ -393,8 +373,8 @@ p {
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 25px;
+    width: 48px;
+    height: 24px;
 }
 
 .switch input {
@@ -415,20 +395,20 @@ p {
 }
 
 .slider.round {
-    border-radius: 25px;
-    color: var(--background-color);
+    border-radius: 18px;
+    color: var(--border-color);
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 21px;
-    width: 21px;
-    left: 2px;
-    bottom: 2px;
-    background-color: var(--background-color);
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--border-color);
     transition: .4s;
-    border-radius: 50%;
+    border-radius: 100%;
 }
 
 /* When the checkbox is checked, move the circle to the right */
